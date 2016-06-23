@@ -1,64 +1,78 @@
 <template>
-  <div id="app">
-    <img class="logo" src="./assets/logo.png">
-    <hello></hello>
-    <p>
-      Welcome to your Vue.js app!
-    </p>
-    <p>
-      To get a better understanding of how this boilerplate works, check out
-      <a href="http://vuejs-templates.github.io/webpack" target="_blank">its documentation</a>.
-      It is also recommended to go through the docs for
-      <a href="http://webpack.github.io/" target="_blank">Webpack</a> and
-      <a href="http://vuejs.github.io/vue-loader/" target="_blank">vue-loader</a>.
-      If you have any issues with the setup, please file an issue at this boilerplate's
-      <a href="https://github.com/vuejs-templates/webpack" target="_blank">repository</a>.
-    </p>
-    <p>
-      You may also want to checkout
-      <a href="https://github.com/vuejs/vue-router/" target="_blank">vue-router</a> for routing and
-      <a href="https://github.com/vuejs/vuex/" target="_blank">vuex</a> for state management.
-    </p>
+  <div id ="demo">
+    <svg width="200" height="200">
+      <polygraph :stats="stats"></polygraph>
+    </svg>
+
+    <div v-for="stat in stats">
+      <label>{{stat.label}}</label>
+      <input type="range" v-model="stat.value" min="0" max="100" />
+      <span>{{stat.value}}</span>
+      <button @click="remove(stat)">X</button>
+    </div>
+    <form id="add">
+      <input name="newlabel" v-model="newLabel" />
+      <button @click="add">Add a stat</button>
+    </form>
+    <pre id="raw">
+      {{stats|json}}
+    </pre>
   </div>
 </template>
 
 <script>
-import Hello from './components/Hello'
+  var stats = [
+    { label: 'A', value: 100 },
+    { label: 'B', value: 100 },
+    { label: 'C', value: 100 },
+    { label: 'D', value: 100 },
+    { label: 'E', value: 100 },
+    { label: 'F', value: 100 }
+  ]
 
-export default {
+  import polygraph from './components/Pllygraph-template.vue'
+  export default {
+    data: function() {return {
+      newLabel: '',
+      stats: stats
+    }
+  },
   components: {
-    Hello
+    'polygraph': polygraph 
+  },
+  methods: {
+    add: function(e) {
+      e.preventDefault()
+      if(!this.newLabel) return
+        this.stats.push({
+          label: this.newLabel,
+          value: 100
+        })
+        this.newLabel=''
+      },
+      remove: function(stat) {
+        if(this.stats.length > 3) {
+          this.stats.$remove(stat)
+        } else {
+          alert('can not remove more')
+        }
+      }
+    }
   }
-}
 </script>
-
 <style>
-html {
-  height: 100%;
-}
+  body {
+    font-family: Helvetica Neue, Arial, sans-serif;
+  }
+  label {
+    display: inline-block;
+    margin-left: 10px;
+    width: 20px;
+  }
 
-body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-}
-
-#app {
-  color: #2c3e50;
-  margin-top: -100px;
-  max-width: 600px;
-  font-family: Source Sans Pro, Helvetica, sans-serif;
-  text-align: center;
-}
-
-#app a {
-  color: #42b983;
-  text-decoration: none;
-}
-
-.logo {
-  width: 100px;
-  height: 100px
-}
+  #raw {
+    position: absolute;
+    top: 0;
+    left: 300px;
+  }
 </style>
